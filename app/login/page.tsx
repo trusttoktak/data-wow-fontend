@@ -115,7 +115,7 @@ export default function LoginPage() {
           BRAND
         </div>
         <div className='flex-1 flex items-center justify-center bg-[#f5f6f8]'>
-          <div className='w-full max-w-[860px] text-center px-4 max-sm:max-w-full'>
+          <div className='w-full max-w-215 text-center px-4 max-sm:max-w-full'>
             <h1 className='text-[2.25rem] font-extrabold text-[#111] mb-2'>
               Select Access Level
             </h1>
