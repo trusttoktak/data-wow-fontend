@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
-import { getServerUser } from '../lib/serverAuth';
-import { serverApi } from '../lib/serverApi';
-import Sidebar from '../components/Sidebar';
-import HomeContent from '../components/home/HomeContent';
+import { getServerUser } from '../../lib/serverAuth';
+import { serverApi } from '../../lib/serverApi';
+import Sidebar from '../../components/Sidebar';
+import AdminContent from '../../components/admin/AdminContent';
 
 interface Concert {
   id: string;
@@ -12,24 +12,23 @@ interface Concert {
   reservedSeats: number;
 }
 
-interface MyReservation {
+interface Reservation {
   id: string;
-  concertId: string;
   status: 'ACTIVE' | 'CANCELLED';
 }
 
-export default async function HomePage() {
+export default async function AdminPage() {
   const user = await getServerUser();
   if (!user) redirect('/login');
-  if (user.role !== 'USER') redirect('/admin');
+  if (user.role !== 'ADMIN') redirect('/');
 
   let concerts: Concert[] = [];
-  let reservations: MyReservation[] = [];
+  let reservations: Reservation[] = [];
 
   try {
     [concerts, reservations] = await Promise.all([
       serverApi.get<Concert[]>('/concerts'),
-      serverApi.get<MyReservation[]>('/reservations/my/history'),
+      serverApi.get<Reservation[]>('/reservations/admin/all'),
     ]);
   } catch (e) {
     if (e instanceof Error && (e.message.includes('401') || e.message.includes('Unauthorized'))) {
@@ -40,8 +39,8 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen bg-app-bg max-sm:flex-col">
-      <Sidebar role="USER" />
-      <HomeContent concerts={concerts} reservations={reservations} />
+      <Sidebar role="ADMIN" />
+      <AdminContent concerts={concerts} reservations={reservations} />
     </div>
   );
 }
